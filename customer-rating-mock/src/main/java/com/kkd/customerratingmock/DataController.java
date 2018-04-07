@@ -8,27 +8,27 @@ public class DataController {
 	
 	@GetMapping("/cust")
 	public String custId() {
-		return "kkd987";
+		return "YOOOO";
 	}
 	
 	@GetMapping("/farm")
 	public String farmId() {
-		return "kkd654";
+		return "KKKKKK";
 	}
 	
 	@GetMapping("/order")
 	public String orderId() {
-		return "ord123";
+		return "WERTTd";
 	}
 	
 	@GetMapping("/rating")
 	public Float rating() {
-		return 987.15f;
+		return 156f;
 	}
 	
 	@GetMapping("/review")
 	public String review() {
-		return "Nice";
+		return "Awesome";
 	}
 
 }

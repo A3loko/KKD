@@ -1,5 +1,6 @@
 package com.kkd.customerratingservice.controller;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -26,6 +27,7 @@ public class CustomerController {
 	@Autowired
 	CustomerRating customerRating;
 	
+	
 	//Get all the reviews
 	@GetMapping("/all")
 	public List<Customers> getAllRatings() {
@@ -37,14 +39,17 @@ public class CustomerController {
 	void addFarmerRating(@RequestBody Customers customer) {
 		customerRating.insert(customer);
 	}
+	
+	
 	//Mocking the data from other service
-	@PostMapping("/add/mock")
-	void addFarmerMock() {
+	@PostMapping("/mock")
+	String addFarmerMock() {
 		String cust=proxy.custId();
 		String farm=proxy.farmId();
 		String order=proxy.orderId();
 		Float rate=proxy.rating();
 		String view=proxy.review();
+		
 		/*
 		JSONObject json = new JSONObject();
 		JSONArray array = new JSONArray();
@@ -57,22 +62,47 @@ public class CustomerController {
 		
 		array.put(item);
 		
-		Customers customer = (JSONObject)json;*/
+		Customers customer = (JSONObject)json;
+		*/
 		
-		Customers customer = null;
+		
+		Customers customer =new Customers();
 		customer.setKkdCustId(cust);
 		customer.setKkdFarmId(farm);
 		customer.setOrderId(order);
 		customer.setRating(rate);
 		customer.setReview(view);
 		
-		customerRating.save(customer);
+		System.out.println("******************"+customer);
+		try {
+		customerRating.insert(customer);
+		}catch(Exception e){
+			System.out.println("**************///////////////////////////////&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+		}
+		return "success";
 	}
 	
 	//Get a specific review based on customer Id
 	@GetMapping("/all/{kkdCustId}")
 	public Customers getOne(@PathVariable String kkdCustId) {
 		return customerRating.findById(kkdCustId).get();
+	}
+	
+	//Getting the average rating
+	@GetMapping("/avg")
+	public float average() {
+		List<Customers> list = customerRating.findAll();
+		Iterator<Customers> i = list.iterator();
+		int number=0;
+		float average=0;
+		Customers cust;
+		while(i.hasNext()) {
+			cust=i.next();
+			average=average+cust.getRating();
+			number++;
+		}
+		
+		return average/number;
 	}
 	
 }

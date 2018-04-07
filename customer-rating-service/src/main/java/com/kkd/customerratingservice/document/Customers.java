@@ -66,6 +66,14 @@ public class Customers {
 	public void setReview(String review) {
 		this.review = review;
 	}
+
+	@Override
+	public String toString() {
+		return "Customers [kkdCustId=" + kkdCustId + ", kkdFarmId=" + kkdFarmId + ", orderId=" + orderId + ", rating="
+				+ rating + ", review=" + review + "]";
+	}
+	
+	
 	
 	
 
