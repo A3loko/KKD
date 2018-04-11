@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kkd.customerratingservice.document.Customers;
 import com.kkd.customerratingservice.proxy.CustomerRatingMockProxy;
 import com.kkd.customerratingservice.repository.CustomerRating;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController()
 @RequestMapping("/customer/rating")
@@ -35,14 +36,21 @@ public class CustomerController {
 	}
 	
 	//Adding a review
+	@HystrixCommand(fallbackMethod="ifAddFarmerRatingFails")
 	@PostMapping("/add")
-	void addFarmerRating(@RequestBody Customers customer) {
+	String addFarmerRating(@RequestBody Customers customer) {
 		customerRating.insert(customer);
+		return "Success";
+	}
+	
+	public String ifAddFarmerRatingFails(@RequestBody Customers customer) {
+		return "Insertion failed";
 	}
 	
 	
 	//Mocking the data from other service
 	@PostMapping("/mock")
+	@HystrixCommand(fallbackMethod="ifAddFarmerMockFails")
 	String addFarmerMock() {
 		String cust=proxy.custId();
 		String farm=proxy.farmId();
@@ -73,15 +81,20 @@ public class CustomerController {
 		customer.setRating(rate);
 		customer.setReview(view);
 		
-		System.out.println("******************"+customer);
 		try {
 		customerRating.insert(customer);
 		}catch(Exception e){
-			System.out.println("**************///////////////////////////////&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+			return "Exception: " + e;
 		}
 		return "success";
 	}
 	
+	
+	public String ifAddFarmerMockFails() {
+		
+		return "Failure";
+		
+	}
 	//Get a specific review based on customer Id
 	@GetMapping("/all/{kkdCustId}")
 	public Customers getOne(@PathVariable String kkdCustId) {
